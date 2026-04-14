@@ -20,7 +20,7 @@ const App = () => {
 
         {/* CTA Buttons */}
         <div className="mt-8 flex gap-4">
-          <Link to="/dashboard">
+          <Link to="/home">
             <button className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-xl text-lg transition">
               Join a Room
             </button> 

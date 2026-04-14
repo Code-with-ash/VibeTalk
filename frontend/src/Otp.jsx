@@ -1,18 +1,22 @@
 import { useState, useRef, useEffect } from "react";
-
+import axios from "axios";
+import { useLocation , useNavigate } from "react-router-dom";
 const Otp = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(30);
   const inputs = useRef([]);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const email = location.state?.email;
 
   useEffect(() => {
     if (timer === 0) return;
 
     const interval = setInterval(() => {
-      setTimer((prev) => prev - 1); 
+      setTimer((prev) => prev - 1);
     }, 1000);
 
-    return () => clearInterval(interval); 
+    return () => clearInterval(interval);
   }, [timer]);
 
   const handleChange = (value, index) => {
@@ -33,7 +37,27 @@ const Otp = () => {
       inputs.current[index - 1].focus();
     }
   };
-
+  const handleVerify = async () => {
+    try {
+      const otpValue = otp.join("");
+      const res = await axios.post("http://localhost:8000/auth/verify-otp", { email, otp: otpValue });
+      console.log(res);
+      if(res.status==200){
+        if(res.data.isNewUser){
+          localStorage.setItem("tempToken", res.data.tempToken);
+          navigate("/avatar", { state: { email } });
+        }
+        else{
+          localStorage.setItem("token", res.data.token);
+          navigate("/home", { state: { email } });
+        }
+      }
+    }
+    catch (err) {
+      console.log("error")
+      console.log(err);
+    }
+  }
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0b0b0b] text-white px-4">
 
@@ -65,8 +89,9 @@ const Otp = () => {
 
         {/* Verify Button */}
         <button
-        disabled={otp.some((digit) => digit === "")}  
-        className="w-full bg-purple-600 hover:bg-purple-700 py-3 rounded-lg text-lg font-medium transition">
+          disabled={otp.some((digit) => digit === "")}
+          onClick={handleVerify}
+          className="w-full bg-purple-600 hover:bg-purple-700 py-3 rounded-lg text-lg font-medium transition">
           Verify OTP
         </button>
 

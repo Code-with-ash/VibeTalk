@@ -1,0 +1,11 @@
+import express from "express";
+import { createRoom, joinRoom, getRoomUsers, leaveRoom, deleteRoom, getMyRooms } from "../controllers/room.controller.js";
+import { authMiddleware } from "../middleware/auth.middleware.js";
+const router = express.Router();
+router.post("/create", authMiddleware, createRoom);
+router.post("/join", authMiddleware, joinRoom);
+router.get("/users", authMiddleware, getRoomUsers);
+router.delete("/leave", authMiddleware, leaveRoom);
+router.delete("/delete", authMiddleware, deleteRoom);
+router.get("/my-rooms", authMiddleware, getMyRooms);
+export default router; 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import axios from "axios";
+import { useLocation } from "react-router-dom";
 const styles = [
   "adventurer",
   "bottts",
@@ -15,6 +16,25 @@ const Avatar = () => {
   const [selectedAvatar, setSelectedAvatar] = useState("");
 
   const seed = username || "User";
+  const location = useLocation();
+  const email = location.state.email;
+
+  const handlecontinue = async () => {
+    try{
+    const res = await axios.post("http://localhost:8000/auth/complete-profile",
+      {email, name : username, avatar: selectedAvatar },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("tempToken")}`,
+        },
+      }
+    );  
+    console.log(res.data);
+  }
+  catch(err){
+    console.log(err);
+  }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0b0b0b] text-white px-4">
@@ -54,11 +74,10 @@ const Avatar = () => {
               <div
                 key={style}
                 onClick={() => setSelectedAvatar(avatarUrl)}
-                className={`p-2 rounded-xl cursor-pointer transition border ${
-                  selectedAvatar === avatarUrl
+                className={`p-2 rounded-xl cursor-pointer transition border ${selectedAvatar === avatarUrl
                     ? "border-purple-500 scale-105"
                     : "border-gray-700 hover:border-gray-500"
-                }`}
+                  }`}
               >
                 <img
                   src={avatarUrl}
@@ -71,19 +90,18 @@ const Avatar = () => {
         </div>
 
         {/* Continue Button */}
-        <Link
-          to="/home"
+        <button
           onClick={(e) => {
             if (!username || !selectedAvatar) e.preventDefault();
+            handlecontinue();
           }}
-          className={`w-full block text-center py-3 rounded-lg text-lg font-medium transition ${
-            username && selectedAvatar
+          className={`w-full block text-center py-3 rounded-lg text-lg font-medium transition ${username && selectedAvatar
               ? "bg-purple-600 hover:bg-purple-700 text-white"
               : "bg-gray-700 text-gray-400 cursor-not-allowed"
-          }`}
+            }`}
         >
           Continue
-        </Link>
+        </button>
 
       </div>
     </div>

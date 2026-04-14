@@ -31,7 +31,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/otp" element={<Otp />} /> 
         <Route path="/avatar" element={<Avatar />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/room" element={<Room />} />
+        <Route path="/room/:roomId" element={<Room />} />
       </Routes> 
     </BrowserRouter>
   </StrictMode>
